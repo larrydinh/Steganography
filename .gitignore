@@ -1,0 +1,111 @@
+# ===============================
+# Python
+# ===============================
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+# compiled files
+*.so
+
+# distribution / packaging
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# pip
+pip-wheel-metadata/
+
+# ===============================
+# Virtual environments
+# ===============================
+
+venv/
+.env/
+.envrc/
+.venv/
+ENV/
+env/
+
+# ===============================
+# IDE
+# ===============================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ===============================
+# OS files
+# ===============================
+
+.DS_Store
+Thumbs.db
+
+# ===============================
+# Testing / coverage
+# ===============================
+
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+
+# ===============================
+# Logs
+# ===============================
+
+*.log
+
+# ===============================
+# Docker
+# ===============================
+
+docker-data/
+*.tar
+
+# ===============================
+# Streamlit cache
+# ===============================
+
+.streamlit/
+
+# ===============================
+# Large generated data
+# ===============================
+
+data/
+datasets/
+outputs/
+results/
+checkpoints/
+models/
+
+# ===============================
+# Jupyter
+# ===============================
+
+.ipynb_checkpoints/
+
+# ===============================
+# Temporary images
+# ===============================
+
+*.png
+*.jpg
+*.jpeg
+*.bmp
+*.tiff
+*.gif
+
+# ===============================
+# Local configuration
+# ===============================
+
+.env.local
+.env.dev
+.env.prod
