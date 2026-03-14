@@ -12,7 +12,7 @@ uploaded_file = st.file_uploader(
 )
 
 password = st.text_input("Password", type="password")
-method = st.selectbox("Method", ["LSB"], index=0)
+method = st.selectbox("Method", ["LSB", "DCT", "DWT"], index=0)
 
 if uploaded_file is not None:
     st.subheader("Uploaded Stego Image")
