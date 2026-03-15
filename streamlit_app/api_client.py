@@ -83,3 +83,34 @@ def decode_image(
         raise APIClientError(f"Could not connect to backend: {exc}") from exc
 
     return _handle_response(response)
+
+
+# BACKEND_URL = "http://backend:8000"
+
+def detect_stego(
+    file_name: str,
+    file_bytes: bytes,
+    mime_type: str,
+    mode: str = "auto",
+    target: str = "auto",
+) -> dict[str, Any]:
+    files = {
+        "file": (file_name, file_bytes, mime_type),
+    }
+    data = {
+        "mode": mode,
+        "target": target,
+        "explain": True,
+    }
+
+    try:
+        response = requests.post(
+            f"{API_BASE_URL}/detect/analyze",
+            files=files,
+            data=data,
+            timeout=TIMEOUT_SECONDS,
+        )
+    except requests.RequestException as exc:
+        raise APIClientError(f"Could not connect to backend: {exc}") from exc
+
+    return _handle_response(response)
