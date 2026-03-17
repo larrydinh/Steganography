@@ -70,6 +70,17 @@ if st.button("Encode", type="primary"):
                 file_name=result["filename"],
                 mime="image/png",
             )
+            # if result.get("source_s3_key") or result.get("encoded_s3_key"):
+            #         st.subheader("S3 Storage")
+            # if result.get("source_s3_key"):
+            #         st.write(f"Source S3 key: `{result['source_s3_key']}`")
+            # if result.get("encoded_s3_key"):
+            #         st.write(f"Encoded S3 key: `{result['encoded_s3_key']}`")
+            # if result.get("source_s3_url"):
+            #         st.markdown(f"[Open source image in S3]({result['source_s3_url']})")
+            if result.get("encoded_s3_url"):
+                    st.caption("Cloud download:")
+                    st.markdown(f"[Open encoded image in S3]({result['encoded_s3_url']})")
 
         except APIClientError as exc:
             st.error(f"Encoding failed: {exc}")

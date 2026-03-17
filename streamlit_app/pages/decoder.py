@@ -41,7 +41,13 @@ if st.button("Decode", type="primary"):
                 value=result["plaintext"],
                 height=220,
             )
+            if result.get("decoded_s3_key"):
+                st.subheader("S3 Storage")
+                st.write(f"Decoded S3 key: `{result['decoded_s3_key']}`")
 
+            if result.get("decoded_s3_url"):
+                st.markdown(f"[Open decoded image in S3]({result['decoded_s3_url']})")
+                
         except APIClientError as exc:
             st.error(f"Decoding failed: {exc}")
         except Exception as exc:

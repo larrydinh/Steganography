@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+from typing import Optional
 
 class EncodeMetrics(BaseModel):
     psnr: float
@@ -12,3 +12,7 @@ class EncodeResponse(BaseModel):
     filename: str
     image_base64: str
     metrics: EncodeMetrics
+    # source_s3_key: Optional[str] = None
+    # encoded_s3_key: Optional[str] = None
+    # source_s3_url: Optional[str] = None
+    encoded_s3_url: Optional[str] = None
