@@ -39,12 +39,14 @@ def encode_image(
     secret_text: str,
     password: str,
     method: str,
+    session_id: str,
 ) -> dict[str, Any]:
     files = {"file": (filename, file_bytes, "application/octet-stream")}
     data = {
         "secret_text": secret_text,
         "password": password,
         "method": method,
+        "session_id": session_id,
     }
 
     try:
@@ -65,11 +67,13 @@ def decode_image(
     filename: str,
     password: str,
     method: str,
+    session_id: str,
 ) -> dict[str, Any]:
     files = {"file": (filename, file_bytes, "application/octet-stream")}
     data = {
         "password": password,
         "method": method,
+        "session_id": session_id,
     }
 
     try:
@@ -85,7 +89,18 @@ def decode_image(
     return _handle_response(response)
 
 
-# BACKEND_URL = "http://backend:8000"
+def retrieve_file(retrieval_code: str) -> dict[str, Any]:
+    try:
+        response = requests.post(
+            f"{API_BASE_URL}/retrieve",
+            json={"retrieval_code": retrieval_code},
+            timeout=TIMEOUT_SECONDS,
+        )
+    except requests.RequestException as exc:
+        raise APIClientError(f"Could not connect to backend: {exc}") from exc
+
+    return _handle_response(response)
+
 
 def detect_stego(
     file_name: str,

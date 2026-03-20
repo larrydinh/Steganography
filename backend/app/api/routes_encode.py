@@ -10,8 +10,13 @@ from backend.app.services.crypto_service import build_secure_payload
 from backend.app.utils.s3_storage import (
     S3_SOURCE_PREFIX,
     S3_ENCODED_PREFIX,
-    build_object_key,
+    RETRIEVAL_CODE_TTL_HOURS,
+    build_session_object_key,
+    build_retrieval_metadata,
+    generate_retrieval_code,
+    retrieval_metadata_key,
     try_upload_bytes,
+    try_upload_json,
     try_generate_presigned_get_url,
 )
 from shared.utils.image_utils import load_image_from_bytes, save_image_to_png_bytes
@@ -25,6 +30,7 @@ async def encode_image(
     secret_text: str = Form(...),
     password: str = Form(...),
     method: str = Form(...),
+    session_id: str = Form(...),
 ):
     try:
         image_bytes = await file.read()
@@ -44,14 +50,13 @@ async def encode_image(
         stego_filename = f"stego_{method.lower()}.png"
         stego_base64 = base64.b64encode(stego_bytes).decode("utf-8")
 
-        # S3 upload
         source_content_type = file.content_type or mimetypes.guess_type(file.filename or "")[0] or "application/octet-stream"
         encoded_content_type = "image/png"
 
-        source_key = build_object_key(S3_SOURCE_PREFIX, file.filename or "source.png")
-        encoded_key = build_object_key(S3_ENCODED_PREFIX, stego_filename)
+        source_key = build_session_object_key(S3_SOURCE_PREFIX, session_id, file.filename or "source.png")
+        encoded_key = build_session_object_key(S3_ENCODED_PREFIX, session_id, stego_filename)
 
-        source_s3_key = try_upload_bytes(
+        try_upload_bytes(
             data=image_bytes,
             key=source_key,
             content_type=source_content_type,
@@ -62,17 +67,28 @@ async def encode_image(
             content_type=encoded_content_type,
         )
 
-        # source_s3_url = try_generate_presigned_get_url(source_s3_key)
         encoded_s3_url = try_generate_presigned_get_url(encoded_s3_key)
+
+        retrieval_code = None
+        if encoded_s3_key:
+            retrieval_code = generate_retrieval_code()
+            metadata = build_retrieval_metadata(
+                code=retrieval_code,
+                session_id=session_id,
+                file_key=encoded_s3_key,
+                filename=stego_filename,
+                kind="encoded",
+            )
+            try_upload_json(metadata, retrieval_metadata_key(retrieval_code))
 
         return EncodeResponse(
             filename=stego_filename,
             image_base64=stego_base64,
             metrics=EncodeMetrics(**metrics),
-            # source_s3_key=source_s3_key,
-            # encoded_s3_key=encoded_s3_key,
-            # source_s3_url=source_s3_url,
             encoded_s3_url=encoded_s3_url,
+            retrieval_code=retrieval_code,
+            retrieval_expires_in_hours=RETRIEVAL_CODE_TTL_HOURS if retrieval_code else None,
+            session_id=session_id,
         )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

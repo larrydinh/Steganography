@@ -16,3 +16,6 @@ class EncodeResponse(BaseModel):
     # encoded_s3_key: Optional[str] = None
     # source_s3_url: Optional[str] = None
     encoded_s3_url: Optional[str] = None
+    retrieval_code: Optional[str] = None
+    retrieval_expires_in_hours: Optional[int] = None
+    session_id: Optional[str] = None

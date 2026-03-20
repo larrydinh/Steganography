@@ -5,6 +5,10 @@ from backend.app.api.routes_decode import router as decode_router
 from backend.app.api.routes_detect import router as detect_router
 app = FastAPI(title="Steganography API")
 
+@app.get("/")
+
+def root():
+    return {"message": "Steganography API is running"}
 
 @app.get("/health")
 def health():
