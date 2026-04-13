@@ -3,7 +3,11 @@ from fastapi import FastAPI
 from backend.app.api.routes_encode import router as encode_router
 from backend.app.api.routes_decode import router as decode_router
 from backend.app.api.routes_detect import router as detect_router
-app = FastAPI(title="Steganography API")
+app = FastAPI(title="Steganography API",
+ root_path="/api",
+    docs_url="/docs",
+    openapi_url="/openapi.json",
+)
 
 @app.get("/")
 
