@@ -15,7 +15,38 @@ def apply_global_styles() -> None:
             --stego-border: #e5e7eb;
         }
         .block-container {padding-top: 4rem; padding-bottom: 4rem; max-width: 1180px;}
-        [data-testid="stSidebar"] {background: #f5f7fb;}
+        
+        [data-testid="stSidebar"] {
+            background: #020817;
+            border-right: 1px solid #1E293B;
+        }
+
+        [data-testid="stSidebarNav"] {
+            background: #020817;
+        }
+
+        [data-testid="stSidebarNav"] ul {
+            padding-top: 1rem;
+        }
+
+        [data-testid="stSidebarNav"] a {
+            background-color: transparent;
+            color: #E5E7EB;
+            border-radius: 12px;
+            margin-bottom: 6px;
+            transition: all 0.2s ease;
+        }
+
+        [data-testid="stSidebarNav"] a:hover {
+            background-color: #111827;
+            color: white;
+        }
+
+        [data-testid="stSidebarNav"] a[aria-current="page"] {
+            background-color: #1E293B;
+            color: white;
+            font-weight: 700;
+        }
         [data-testid="stSidebarNav"] ul {padding-top: 1rem;}
         h1, h2, h3 {color: var(--stego-navy); letter-spacing: -0.03em;}
         .hero-card {
@@ -49,6 +80,26 @@ def apply_global_styles() -> None:
         .result-banner {padding:1.2rem 1.4rem; border-radius:18px; border:1px solid #bbf7d0; background:#f0fdf4; color:#14532d; margin-bottom:1rem;}
         .danger-banner {padding:1.1rem 1.2rem; border-radius:18px; border:1px solid #fecaca; background:#fef2f2; color:#7f1d1d;}
         .metric-help {font-size:.84rem; color: var(--stego-muted);}
+        .backend-status-box {
+            background-color: #0F2419;
+            color: #7CFFB2;
+            border: 1px solid #1E5A3C;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .backend-status-error {
+            background-color: #2A1113;
+            color: #FFB4B4;
+            border: 1px solid #7A1F28;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.12);
+        }
         div[data-testid="stButton"] > button {border-radius: 12px; font-weight: 700;}
         div[data-testid="stDownloadButton"] > button {border-radius: 12px; font-weight: 700;}
         </style>
@@ -67,17 +118,31 @@ def render_page_header(title: str, subtitle: str, session_id: str | None = None)
 
 def render_sidebar_status(health_func, error_cls) -> None:
     with st.sidebar:
-        # st.markdown("### 🔐 Secure Stego")
-        # st.caption("Encrypted image steganography web service")
-        # st.divider()
         st.markdown("### Backend Status")
         try:
             status = health_func()
-            st.markdown(f"<div class='status-card'>Status: {html.escape(status['status'])}</div>", unsafe_allow_html=True)
+            st.markdown(
+                f"""
+                <div class="backend-status-box">
+                    <strong>Status:</strong> {html.escape(status['status'])}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
         except error_cls as exc:
-            st.error(str(exc))
+            st.markdown(
+                f"""
+                <div class="backend-status-error">
+                    <strong>Error:</strong> {html.escape(str(exc))}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
         st.divider()
-        st.caption("Tip: Use Encode first, then decode the generated image or retrieval code.")
+        st.caption(
+            "Tip: Use Encode first, then decode the generated image or retrieval code.")
+        st.divider()
 
 
 def estimate_payload_capacity(image_bytes: bytes | None, secret_text: str) -> None:
