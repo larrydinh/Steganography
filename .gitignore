@@ -71,7 +71,7 @@ docker-data/
 # Streamlit cache
 # ===============================
 
-.streamlit/
+# .streamlit/
 
 # ===============================
 # Large generated data
@@ -94,12 +94,12 @@ models/
 # Temporary images
 # ===============================
 
-*.png
-*.jpg
-*.jpeg
-*.bmp
-*.tiff
-*.gif
+# *.png
+# *.jpg
+# *.jpeg
+# *.bmp
+# *.tiff
+# *.gif
 
 # ===============================
 # Local configuration
