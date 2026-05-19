@@ -4,6 +4,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from streamlit_app.api_client import encode_image, APIClientError
+from streamlit_app.ui_helpers import apply_global_styles, render_page_header, estimate_payload_capacity
 
 
 def get_or_create_session_id() -> str:
@@ -87,6 +88,9 @@ def clear_encoder_state() -> None:
     st.session_state["encoder_file"] = None
 
 
+st.set_page_config(page_title="Encode Message", page_icon="🔒", layout="wide")
+apply_global_styles()
+
 session_id = get_or_create_session_id()
 
 if "encoder_uploaded_name" not in st.session_state:
@@ -102,12 +106,24 @@ if "encoder_password" not in st.session_state:
 if "encoder_method" not in st.session_state:
     st.session_state["encoder_method"] = "LSB"
 
-st.title("Encoder")
-st.caption("Upload a cover image, enter a secret message, and generate a stego image.")
-st.caption(f"Browser session: {session_id}")
+render_page_header(
+    "Encode Message",
+    "Upload a cover image, encrypt your secret text, and generate a stego image.",
+    session_id,
+)
+
+st.markdown("""
+<div class="pill-row">
+    <span class="pill">Step 1: Upload</span>
+    <span class="pill">Step 2: Encrypt</span>
+    <span class="pill">Step 3: Embed</span>
+    <span class="pill">Step 4: Download / Retrieve</span>
+</div>
+""", unsafe_allow_html=True)
 
 with st.container(border=True):
-    st.subheader("Choose cover image")
+    st.subheader("Step 1 — Choose cover image")
+    st.caption("PNG images are recommended for the cleanest LSB embedding result.")
 
     uploaded_file = st.file_uploader(
         "Upload cover image",
@@ -122,9 +138,10 @@ with st.container(border=True):
 
     if st.session_state["encoder_uploaded_name"]:
         st.success(f"Selected image: {st.session_state['encoder_uploaded_name']}")
+        st.image(st.session_state["encoder_uploaded_bytes"], caption="Cover image preview", width=420)
 
 with st.container(border=True):
-    st.subheader("Encoding settings")
+    st.subheader("Step 2 — Encoding settings")
 
     secret_text = st.text_area(
         "Secret text",
@@ -133,11 +150,23 @@ with st.container(border=True):
         key="encoder_secret_text",
     )
 
+    estimate_payload_capacity(st.session_state.get("encoder_uploaded_bytes"), secret_text)
+
     password = st.text_input(
         "Password",
         type="password",
         key="encoder_password",
+        help="The message is encrypted before it is embedded into the image.",
     )
+
+    st.markdown("**Method guide**")
+    m1, m2, m3 = st.columns(3)
+    with m1:
+        st.markdown("<div class='method-card'><strong>LSB</strong><span>Fast and simple. Best for PNG/BMP demo flows.</span></div>", unsafe_allow_html=True)
+    with m2:
+        st.markdown("<div class='method-card'><strong>DCT</strong><span>Frequency-domain method, useful for robustness discussion.</span></div>", unsafe_allow_html=True)
+    with m3:
+        st.markdown("<div class='method-card'><strong>DWT</strong><span>Wavelet-domain method, useful for quality comparison.</span></div>", unsafe_allow_html=True)
 
     method = st.selectbox(
         "Method",
@@ -175,7 +204,10 @@ if encode_clicked:
         st.warning("Please enter a password.")
     else:
         try:
+            progress = st.progress(0, text="Preparing image...")
             with st.spinner("Encoding secret into image..."):
+                progress.progress(25, text="Encrypting message...")
+                progress.progress(55, text="Embedding encrypted payload...")
                 result = encode_image(
                     file_bytes=st.session_state["encoder_uploaded_bytes"],
                     filename=st.session_state["encoder_uploaded_name"],
@@ -185,6 +217,7 @@ if encode_clicked:
                     session_id=session_id,
                 )
 
+            progress.progress(100, text="Stego image generated.")
             st.session_state["encoder_result"] = result
             st.success("Encoding successful.")
 
@@ -198,6 +231,7 @@ if result:
     image_bytes = base64.b64decode(result["image_base64"])
 
     with st.container(border=True):
+        st.markdown("<div class='result-banner'><strong>✅ Message successfully hidden.</strong><br>Your stego image is ready to download or retrieve later using the generated code.</div>", unsafe_allow_html=True)
         st.subheader("Stego image")
         st.image(image_bytes, caption=result["filename"], width=520)
 
@@ -210,7 +244,8 @@ if result:
         )
 
     with st.container(border=True):
-        st.subheader("Metrics")
+        st.subheader("Quality metrics")
+        st.caption("These values help compare how much the output image changed after embedding.")
         render_metrics(result["metrics"])
 
     if result.get("retrieval_code"):
