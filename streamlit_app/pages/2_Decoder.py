@@ -293,5 +293,5 @@ if decode_result:
             label_visibility="collapsed",
         )
 
-        if decode_result.get("decoded_s3_url"):
-            st.markdown(f"[Open decoded image in S3]({decode_result['decoded_s3_url']})")
+        # if decode_result.get("decoded_s3_url"):
+        #     st.markdown(f"[Open decoded image in S3]({decode_result['decoded_s3_url']})")

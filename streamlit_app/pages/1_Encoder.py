@@ -246,16 +246,47 @@ if result:
     with st.container(border=True):
         st.subheader("Quality metrics")
         st.caption("These values help compare how much the output image changed after embedding.")
-        render_metrics(result["metrics"])
+
+        quality_metrics = result.get("metrics", {})
+
+        col1, col2, col3, col4 = st.columns(4)
+
+        with col1:
+            st.metric("PSNR", f"{quality_metrics.get('psnr', 0):.2f}")
+            st.caption("Image quality after embedding. Higher means fewer visible changes.")
+
+        with col2:
+            st.metric("SSIM", f"{quality_metrics.get('ssim', 0):.4f}")
+            st.caption("Similarity between original and stego image. Closer to 1 means more identical.")
+
+        with col3:
+            st.metric("BPP", f"{quality_metrics.get('bpp', 0):.4f}")
+            st.caption("Hidden data capacity per pixel. Higher means more data embedded.")
+
+        with col4:
+            st.metric("Embed Time", f"{quality_metrics.get('embed_time_sec', 0):.4f}s")
+            st.caption("Time needed to hide the message inside the image.")
+
 
     if result.get("retrieval_code"):
         with st.container(border=True):
             st.subheader("Retrieval code")
+            st.caption(
+                "Copy and save this code before leaving the page. "
+                "You can use it later in the Decoder page to retrieve your stego image."
+            )
             st.code(result["retrieval_code"])
             render_copy_button(result["retrieval_code"], "Copy")
             st.caption(f"Code expires in {result['retrieval_expires_in_hours']} hours.")
 
-    if result.get("encoded_s3_url"):
-        with st.container(border=True):
-            st.subheader("Storage")
-            st.markdown(f"[Open encoded image in S3]({result['encoded_s3_url']})")
+            st.divider()
+            st.markdown("**Ready to decode your hidden message?**")
+            st.caption("Click the button below to open the Decoder page, then paste your retrieval code.")
+
+            if st.button("Go to Decoder", type="primary", use_container_width=True):
+                st.switch_page("pages/2_Decoder.py")
+
+    # if result.get("encoded_s3_url"):
+    #     with st.container(border=True):
+    #         st.subheader("Storage")
+    #         st.markdown(f"[Open encoded image in S3]({result['encoded_s3_url']})")
