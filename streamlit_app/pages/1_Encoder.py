@@ -123,7 +123,7 @@ st.markdown("""
 
 with st.container(border=True):
     st.subheader("Step 1 — Choose cover image")
-    st.caption("PNG images are recommended for the cleanest LSB embedding result.")
+    st.caption("Please choose an image that you want to cover your secret text (it could be any images). However, .png images are recommended for the cleanest LSB embedding result.")
 
     uploaded_file = st.file_uploader(
         "Upload cover image",
@@ -162,11 +162,11 @@ with st.container(border=True):
     st.markdown("**Method guide**")
     m1, m2, m3 = st.columns(3)
     with m1:
-        st.markdown("<div class='method-card'><strong>LSB</strong><span>Fast and simple. Best for PNG/BMP demo flows.</span></div>", unsafe_allow_html=True)
+        st.markdown("<div class='method-card'><strong>LSB</strong><span> Recommended in your 1st try ! LSB (Least Significant Bit) is fast and simple. Best for PNG/BMP demo flows.</span></div>", unsafe_allow_html=True)
     with m2:
-        st.markdown("<div class='method-card'><strong>DCT</strong><span>Frequency-domain method, useful for robustness discussion.</span></div>", unsafe_allow_html=True)
+        st.markdown("<div class='method-card'><strong>DCT</strong><span> DCT (Discrete Cosine Transform) is a Frequency-domain method, recommended for JPEG images due to its robustness and surviving  image compression .</span></div>", unsafe_allow_html=True)
     with m3:
-        st.markdown("<div class='method-card'><strong>DWT</strong><span>Wavelet-domain method, useful for quality comparison.</span></div>", unsafe_allow_html=True)
+        st.markdown("<div class='method-card'><strong>DWT</strong><span>DWT (Discrete Wavelet Transform) is a Wavelet-domain method, recommended for better visual quality, lower visible distortion, and improved resistance against steganalysis detection.</span></div>", unsafe_allow_html=True)
 
     method = st.selectbox(
         "Method",
@@ -184,16 +184,16 @@ with st.container(border=True):
             clear_encoder_state()
             st.rerun()
 
-if st.session_state["encoder_uploaded_bytes"] is not None:
-    with st.container(border=True):
-        st.subheader("Preview")
+# if st.session_state["encoder_uploaded_bytes"] is not None:
+#     with st.container(border=True):
+#         st.subheader("Preview")
 
-        with st.expander("Show original image", expanded=False):
-            st.image(
-                st.session_state["encoder_uploaded_bytes"],
-                caption=st.session_state["encoder_uploaded_name"],
-                width=520,
-            )
+#         with st.expander("Show original image", expanded=False):
+#             st.image(
+#                 st.session_state["encoder_uploaded_bytes"],
+#                 caption=st.session_state["encoder_uploaded_name"],
+#                 width=520,
+#             )
 
 if encode_clicked:
     if st.session_state["encoder_uploaded_bytes"] is None:
@@ -231,7 +231,7 @@ if result:
     image_bytes = base64.b64decode(result["image_base64"])
 
     with st.container(border=True):
-        st.markdown("<div class='result-banner'><strong>✅ Message successfully hidden.</strong><br>Your stego image is ready to download or retrieve later using the generated code.</div>", unsafe_allow_html=True)
+        st.markdown("<div class='result-banner'><strong>✅ Message successfully hidden !.</strong><br>Your stego image is ready to download or retrieve later using the generated code.</div>", unsafe_allow_html=True)
         st.subheader("Stego image")
         st.image(image_bytes, caption=result["filename"], width=520)
 

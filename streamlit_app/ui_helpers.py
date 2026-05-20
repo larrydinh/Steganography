@@ -111,9 +111,9 @@ def apply_global_styles() -> None:
 def render_page_header(title: str, subtitle: str, session_id: str | None = None) -> None:
     st.title(title)
     st.caption(subtitle)
-    if session_id:
-        with st.expander("Session information", expanded=False):
-            st.code(session_id)
+    # if session_id:
+    #     with st.expander("Session information", expanded=False):
+    #         st.code(session_id)
 
 
 def render_sidebar_status(health_func, error_cls) -> None:
