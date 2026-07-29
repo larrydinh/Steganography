@@ -1,4 +1,4 @@
-# Encrypted Image Steganography Web Service | MODERN CLOUD SERVICE | AWS S3/EC2 | Docker 
+# Encrypted Image Steganography Web Service 
 
 <p align="center">
   <img src="streamlit_app/assets/images/stego_banner.png" alt="Encrypted Image Steganography Web Service" width="850">
@@ -6,9 +6,7 @@
 
 ## Introduction
 
-This project is a web application for hiding encrypted text messages inside images.
-
-A user uploads an image, writes a message, chooses a password and selects one of three steganography methods: **LSB**, **DCT**, or **DWT**. The application encrypts the message before embedding it into the image. The receiver can later upload the generated image and use the same password and method to recover the message.
+This project is a web application for hiding encrypted text messages inside images. It hides words inside a digital picture in a way that the human eye cannot see. A password is then used to protect and recover the hidden message.
 
 The project was developed as part of my master's thesis, **Encrypted Image Steganography Web Service — Design & Evaluation**.
 
@@ -20,7 +18,6 @@ The main goals were to:
 - store and retrieve generated images through Amazon S3; and
 - provide a basic detector for analyzing suspicious images.
 
-For someone without a technical background, the idea is similar to placing a locked note inside a photograph. The image hides the note, while the password protects its content.
 
 ## Architecture
 <p align="center">
@@ -44,7 +41,22 @@ Both services run in separate Docker containers. Nginx can be used as a reverse 
   >
 </p>
 
+1. Upload a PNG image on the Encoder page.
+2. Enter a message and password.
+3. Select LSB, DCT, or DWT.
+4. Generate and download the stego image.
+5. Open the Decoder page.
+6. Upload the generated image.
+7. Enter the same password and method.
+8. Recover the original message.
+9. Compare the original and stego images using PSNR, SSIM, BPP, and processing time.
 
+## Live Demo
+
+Try the live application here:
+http://54.84.218.22/ 
+
+Note: The application may occasionally be unavailable due to limited AWS hosting budget ...
 ## How It Works
 
 ### Encoding
@@ -76,44 +88,13 @@ The result is only an indication. It does not prove that an image contains a hid
 </p>
 
 
-### Programming Language
-
-- [Python](https://www.python.org/)
-
-### Frontend
-
-- [Streamlit](https://streamlit.io/)
-- [Pillow](https://python-pillow.org/)
-
-### Backend
-
-- [FastAPI](https://fastapi.tiangolo.com/)
-- [Uvicorn](https://www.uvicorn.org/)
-- [Pydantic](https://docs.pydantic.dev/)
-
-### Image Processing and Evaluation
-
-- [NumPy](https://numpy.org/)
-- [scikit-image](https://scikit-image.org/)
-- [PyWavelets](https://pywavelets.readthedocs.io/)
-
-### Encryption
-
-- AES-GCM
-- PBKDF2
-- [PyCryptodome](https://www.pycryptodome.org/)
-
-### Cloud and Deployment
-
-- [Amazon EC2](https://aws.amazon.com/ec2/)
-- [Amazon S3](https://aws.amazon.com/s3/)
-- [Docker](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/)
-- [Nginx](https://nginx.org/)
-
-### Testing
-
-- [Pytest](https://docs.pytest.org/)
+- **Language:** [Python](https://www.python.org/)
+- **Frontend:** [Streamlit](https://streamlit.io/), [Pillow](https://python-pillow.org/)
+- **Backend:** [FastAPI](https://fastapi.tiangolo.com/), [Uvicorn](https://www.uvicorn.org/), [Pydantic](https://docs.pydantic.dev/)
+- **Image Processing:** [NumPy](https://numpy.org/), [scikit-image](https://scikit-image.org/), [PyWavelets](https://pywavelets.readthedocs.io/)
+- **Encryption:** AES-GCM, PBKDF2, [PyCryptodome](https://www.pycryptodome.org/)
+- **Cloud & Deployment:** [AWS EC2](https://aws.amazon.com/ec2/), [AWS S3](https://aws.amazon.com/s3/), [Docker](https://www.docker.com/), [Docker Compose](https://docs.docker.com/compose/), [Nginx](https://nginx.org/)
+- **Testing:** [Pytest](https://docs.pytest.org/)
 
 ## Image Evaluation
 
@@ -198,29 +179,13 @@ docker compose down
 
 ## Amazon S3 Configuration
 
-Amazon S3 is optional. The application can still encode, download, upload, and decode images without it.
+Amazon S3 is optional. The application can still encode, download, upload, and decode images without it. (by using the upload pictures/encoded pictures option)
 
 S3 is required for retrieval codes and temporary cloud storage.
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root similar to file AWS_APP_RUNNER_ENV.md
 
-```env
-AWS_REGION=eu-central-1
-S3_BUCKET_NAME=your-bucket-name
-
-S3_SOURCE_PREFIX=source/
-S3_ENCODED_PREFIX=encoded/
-S3_DECODED_PREFIX=decoded/
-S3_RETRIEVAL_PREFIX=retrieval/
-
-PRESIGNED_URL_EXPIRES=3600
-RETRIEVAL_CODE_TTL_HOURS=24
-
-AWS_ACCESS_KEY_ID=your-access-key
-AWS_SECRET_ACCESS_KEY=your-secret-key
-```
-
-Do not upload the `.env` file or AWS credentials to GitHub. For EC2 deployment, an IAM role is safer than storing permanent access keys on the server.
+Please remember to not uploading the `.env` file or AWS credentials to GitHub !!!
 
 ## API Endpoints
 
@@ -240,27 +205,6 @@ http://localhost:8000/docs
 
 Depending on the reverse-proxy configuration, production endpoints may use an `/api` prefix.
 
-## Run the Tests
-
-```bash
-pytest -q
-```
-
-## Demo
-
-A typical demonstration follows this flow:
-
-1. Upload a PNG image on the Encoder page.
-2. Enter a message and password.
-3. Select LSB, DCT, or DWT.
-4. Generate and download the stego image.
-5. Open the Decoder page.
-6. Upload the generated image.
-7. Enter the same password and method.
-8. Recover the original message.
-9. Compare the original and stego images using PSNR, SSIM, BPP, and processing time.
-
-A public demo link or thesis demonstration video can be added here when available.
 
 ## Challenges
 
