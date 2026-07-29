@@ -38,7 +38,7 @@ Both services run in separate Docker containers. Nginx can be used as a reverse 
 
 <p align="center">
   <img
-    src="assets/stegovault-demo.gif"
+    src="streamlit_app/assets/stegovault-demo.gif"
     alt="StegoVault encoding and decoding demo"
     width="360"
   >
